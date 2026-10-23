@@ -1,56 +1,27 @@
 %% using cwtft in spectrog with moarletParam = 100;
 mp = 100;
-CLIMs_EZ = [5, 40;  % 1
-     5,25;          %2
-    10,40;          %3
-    10,40;          %4
-     5,40;          %5
-    25,45;          %6
-    15,25;          %7
-    10,30;          %8
-    10,30;          %9
-     0,40;          %10
-     5,20;          %11
-    10,70;          %12
-    10,30;
-     0,20;
-    10,30;          %15
-     0,30;
-    10,35;
-     0,30;
-    10,35;
-    10,40;          %20
-    10,30;
-     0,30;
-     5,30;
-     5,30;
-     5,30];
+% Colour scales for P1-P10, taken from the same patient rows as generate_data.
+CLIMs_EZ = [5, 40;   % P1
+     5,25;           % P2
+    10,40;           % P3
+    10,40;           % P4
+     5,40;           % P5
+    25,45;           % P6
+    15,25;           % P7
+    10,30;           % P8
+    10,30;           % P9
+     5,40];          % P10
 
 CLIMs_PZ = [5, 40;
      5,25;
     10,40;
    -10,20;
-     0,35;          %5
+     5,40;           % P5
    -10,30;
      5,25;
     10,30;
     10,30;
-     5,40;          %10
-     5,20;
-    10,70;          %12
-    10,30;
-     0,20;
-    10,30;          %15
-     0,30;
-     0,20;
-     0,15;
-    10,20;
-    10,30;          %20
-    10,30;
-     0,30;
-     5,20;
-     5,30;
-     5,20];
+     0,35];          % P10, previously row 5
 
  %% plot tfm
  % for time-frequency map
@@ -107,6 +78,7 @@ for i = 1:N
     shading flat
     set(gca,'YDir','normal','fontsize',20);
     savefig(['./figs/tfm_Pat_',int2str(i),'.fig']);
+    saveas(gcf,['./figs/tfm_Pat_',int2str(i),'.pdf']);
     
     close all
 end

@@ -154,7 +154,7 @@ disp([' Nonlinearity: phi = ', num2str(info.phi)]);
 
 mask(mask==0)=nan;
 % -------------- plot bicoherence ---------------------
-figure('visible','on','position',[600,100,600,250])
+figure('visible','off','position',[600,100,600,250])
 contourf(waxis,waxis,abs(bic).*mask.*mask_t,50,'LineStyle','none'), grid on
 hold on
 plot([0,fmax/2],[0,fmax/2],'r-','linewidth',2);
@@ -174,7 +174,7 @@ savefig(gcf,[folder,pre,'_bic_amp_Pat_',num2str(i),'.fig'],'compact');
 saveas(gcf,[folder,pre,'_bic_amp_Pat_',num2str(i),'.pdf']);
 %close all;
 
-figure('visible','on','position',[600,100,600,250])
+figure('visible','off','position',[600,100,600,250])
 contourf(waxis,waxis,real(bic).*mask,50,'LineStyle','none'), grid on
 hold on
 plot([0,fmax/2],[0,fmax/2],'r-','linewidth',2);
@@ -192,7 +192,7 @@ savefig(gcf,[folder,pre,'_bic_skew_Pat_',num2str(i),'.fig'],'compact');
 saveas(gcf,[folder,pre,'_bic_skew_Pat_',num2str(i),'.pdf']);
 %close all;
 
-figure('visible','on','position',[600,100,600,250])
+figure('visible','off','position',[600,100,600,250])
 contourf(waxis,waxis,imag(bic).*mask,50,'LineStyle','none'), grid on
 hold on
 plot([0,fmax/2],[0,fmax/2],'r-','linewidth',2);

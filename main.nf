@@ -1,84 +1,99 @@
 /*
- * Practice only. take H-patterns as an exammple, local executor.
- * This is for the stereo-EEG analysis.
+ * The study chain, on ten seizures.
+ * generate_data: bipolar, notch step, LVFA window, loess.
+ * pre_plots: trace and spectrum.
+ * TFM_cwt: Morlet map, Spectrog.m, morlet parameter 100.
+ * phlg_decouple: below 100 Hz and above 100 Hz.
+ * bicoher_all: bicoherence.
+ * prop_all: transfer function, tf_estimation.m.
+ *
+ * Raw EDF and the full MAT files stay in data/ and are gitignored.
  */
- 
-process receive {
-    publishDir 'results', mode: 'copy'
+
+nextflow.enable.dsl = 2
+
+params.only = ''
+
+process generate_data {
+    publishDir "${params.out}", mode: 'copy'
     output:
-    path '01_received.txt'
+        path 'data.mat'
     script:
     """
-    echo "From the hospital: EDF, discharge times, electrod sites,clinical metadata." > 01_received.txt
-    echo "These files stay in data/ and are not in the repository." >> 01_received.txt
+    ${params.matlab} -batch "set(0,'DefaultFigureVisible','off'); addpath('${projectDir}'); generate_data"
     """
 }
 
-process organise {
-    publishDir 'results', mode: 'copy'
+process pre_plots {
+    publishDir "${params.out}", mode: 'copy'
     input:
-    path received
+        path cohort
     output:
-    path '02_organised.txt'
+        path 'figs'
     script:
     """
-    echo "one folder per patient. Python and MNE, edf2mat.py, into MATLAB." > 02_organised.txt
-    echo "Input: ${received}" >>02_organised.txt
+    mkdir -p figs
+    ${params.matlab} -batch "set(0,'DefaultFigureVisible','off'); addpath('${projectDir}'); load('data.mat'); pre_plots"
     """
 }
 
-process standardise {
-    publishDir 'results', mode: 'copy'
+process TFM_cwt {
+    publishDir "${params.out}", mode: 'copy'
     input:
-    path organised
+        path cohort
     output:
-    path '03_standardised.txt'
+        path 'figs'
     script:
     """
-    echo "Bipolar montage. -10 s to +100 s. one wavelet for every seizure. TFM_cwt.m." > 03_standardised.txt
-    echo "Input: ${organised}" >> 03_standardised.txt
+    mkdir -p figs
+    ${params.matlab} -batch "set(0,'DefaultFigureVisible','off'); addpath('${projectDir}'); load('data.mat'); TFM_cwt"
     """
 }
 
-process pattern {
-    publishDir 'results', mode: 'copy'
+process phlg_decouple {
+    publishDir "${params.out}", mode: 'copy'
     input:
-    path standardised
+        path cohort
     output:
-    path '04_pattern.txt'
+        path 'figs'
     script:
     """
-    echo "H-pattern: evenly spaced bands. dH-pattern: band count above the upper quartile." > 04_pattern.txt
-    echo "Input: ${standardised}" >> 04_pattern.txt
+    mkdir -p figs
+    ${params.matlab} -batch "set(0,'DefaultFigureVisible','off'); addpath('${projectDir}'); load('data.mat'); phlg_decouple"
     """
 }
 
-process check {
-    publishDir 'results', mode: 'copy'
+process bicoher_all {
+    publishDir "${params.out}", mode: 'copy'
     input:
-    path named
+        path cohort
     output:
-    path '05_checked.txt'
+        path 'figs'
     script:
     """
-    echo "Same settings for every seizure, then the surgical outcome." > 05_checked.txt
-    echo "Input: ${named}" >> 05_checked.txt
+    mkdir -p figs
+    ${params.matlab} -batch "set(0,'DefaultFigureVisible','off'); addpath('${projectDir}'); load('data.mat'); bicoher_all"
     """
 }
 
-process share {
-    publishDir 'results', mode: 'copy'
+process prop_all {
+    publishDir "${params.out}", mode: 'copy'
     input:
-    path checked
+        path cohort
     output:
-    path '06_shared.txt'
+        path 'figs'
     script:
     """
-    echo "Paper and code can be public. Raw recordings stay controlled." > 06_shared.txt
-    echo "Input: ${checked}" >> 06_shared.txt
+    mkdir -p figs
+    ${params.matlab} -batch "set(0,'DefaultFigureVisible','off'); addpath('${projectDir}'); load('data.mat'); prop_all"
     """
 }
 
 workflow {
-    receive() | organise | standardise | pattern | check | share
+    cohort = generate_data()
+    pre_plots(cohort)
+    TFM_cwt(cohort)
+    phlg_decouple(cohort)
+    bicoher_all(cohort)
+    prop_all(cohort)
 }

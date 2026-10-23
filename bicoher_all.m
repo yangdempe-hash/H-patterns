@@ -1,4 +1,4 @@
-range_i = 12; % [11,1,12,16];
+range_i = 1:N;
 
 nfft = 2^9;
 for ni = 1:numel(range_i)
@@ -18,7 +18,7 @@ for ni = 1:numel(range_i)
 %     info_EZ = bicoher(EZ,nfft,5,nfft,50,fs,fmax,folders{i},'/EZ');
 %     info_PZ = bicoher(PZ,nfft,5,nfft,50,fs,fmax,folders{i},'/PZ');
     
-    info_EZ = bicoher(EZ,nfft,5,nfft,50,fs,fmax,'./fig3S_subfigs','/fig3S_EZ',i);
-    info_PZ = bicoher(PZ,nfft,5,nfft,50,fs,fmax,'./fig3S_subfigs','/fig3S_PZ',i);
-    %save([folders{i},'/bic_info.mat'],'info_EZ','info_PZ');
+    info_EZ = bicoher(EZ,nfft,5,nfft,50,fs,fmax,'./figs','/EZ',i);
+    info_PZ = bicoher(PZ,nfft,5,nfft,50,fs,fmax,'./figs','/PZ',i);
+    save(['./figs/bic_Pat_',num2str(i),'.mat'],'info_EZ','info_PZ');
 end
